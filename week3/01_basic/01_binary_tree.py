@@ -17,9 +17,9 @@
 
 예제:
 트리 구조:
-      1
+      1  
      / \
-    2   3
+    2   3  
    / \
   4   5
 
@@ -44,34 +44,40 @@ def preorder(root):
     result = []
     
     # TODO: root가 None이면 빈 리스트 반환
-    pass
+    if root == None:
+
+        return result
     
     # TODO: 루트 값 추가
-    pass
+    result.append(root.value)
     
     # TODO: 왼쪽 서브트리 순회
-    pass
+    result.extend(preorder(root.left)) #왜 extend(preorder()) 일까?
     
     # TODO: 오른쪽 서브트리 순회
-    pass
-    
+    result.extend(preorder(root.right))
+
     return result
+
+    # append() 와 exrend()의 차이점.
 
 def inorder(root):
     """중위 순회: 왼쪽 → 루트 → 오른쪽"""
     result = []
     
     # TODO: root가 None이면 빈 리스트 반환
-    pass
+    if root == None:
+
+        return result
     
     # TODO: 왼쪽 서브트리 순회
-    pass
+    result.extend(inorder(root.left))
     
     # TODO: 루트 값 추가
-    pass
+    result.append(root.value)
     
     # TODO: 오른쪽 서브트리 순회
-    pass
+    result.extend(inorder(root.right))
     
     return result
 
@@ -80,16 +86,17 @@ def postorder(root):
     result = []
     
     # TODO: root가 None이면 빈 리스트 반환
-    pass
+    if root == None:
+        return result
     
     # TODO: 왼쪽 서브트리 순회
-    pass
+    result.extend(postorder(root.left))
     
     # TODO: 오른쪽 서브트리 순회
-    pass
-    
+    result.extend(postorder(root.right))
+
     # TODO: 루트 값 추가
-    pass
+    result.append(root.value)
     
     return result
 
