@@ -40,21 +40,30 @@ def is_palindrome(s):
 
     # 문자열을 한 글자씩 확인한다
     for char in s:
-
         # 알파벳이나 숫자인지 확인한다
-        if char.isalnum():
+        if char.isalnum(): 
+        
+        # isalnum()는 해당 문자열이 알파벳(문자)이나 숫자로만 이루어져 있는지 확인하는 메서드 
+        # 공백, 특수만자, 기호 등 하나라도 섞여 있거나, 문자열이 비어있으면 False를 반환함.
+        # 문자 또는 숫자만 있으면 True 반홤.
 
+        # *** isaplha() 문자만 있는지 확인, isdigit() 숫자만 있는지 확인하는 메서드***
+        
             # 소문자로 바꾼 후 text에 추가한다
-            text = text + char.lower()
+            text = text + char.lower() 
+            # Q. 왜 text = text + char.lower()인가
+            # A. 반복문 안에서 왜 text = char.lower() 하면 반복될 때마다 기존의 값 위에 새로운 값이 씌어짐.
+            #    그러면 내가 원하는 값이 도출되지 않기 때문에 기존의 값에 더해줘야하기 때문.
 
     # text를 뒤집는다
-    reverse_text = text[::-1]
+    reverse_text = text[::-1] # 파이썬의 슬라이싱(slicing 문법) 문자열[시작:끝:간격] -1이면 한칸씩 , 뒤에서 앞으로.
 
     # 두 문자열이 같은지 확인한다
     if text == reverse_text:
-        return True
+        return True # 앞뒤 동일 시 True
     else:
-        return False
+        return False # 불일치시 False
+    
     # TODO: 알파벳과 숫자만 남기고 소문자로 변환하세요
     # 힌트: isalnum() 메서드와 lower() 메서드 사용
     pass
