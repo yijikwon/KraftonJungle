@@ -57,10 +57,11 @@ def find_above_average_students(students):
     # above_average_students = [student["name"] for student in students if average <= student["score"]] # 리스트 컴프리헨션
     #            리스트            결과로 넣을 것          변수      반복할 대상          조건
     
-    above_average_student = []
+    above_average_students = []
     for student in students:
         if average <= student["score"]:
-            above_average_student.append(student["name"])
+            above_average_students.append(student["name"])
+
     return average, above_average_students
 
 # 테스트 케이스
