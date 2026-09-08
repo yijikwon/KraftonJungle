@@ -42,15 +42,25 @@ def find_above_average_students(students):
         tuple: (평균 점수, 평균 이상 학생 이름 리스트)
     """
     # TODO: 모든 학생의 점수를 리스트로 추출하세요
-    scores = [student["score"] for student in students] #리스트 컴프리헨션 방식
+    scores = []
+    for student in students:
+        scores.append(student["score"])
+
+    # scores = [student["score"] for student in students] # 리스트 컴프리헨션(위의 코드를 한줄로 요약)
+    # 결과로 넣을 것 for 변수 in 반복할 대상
     
     # TODO: 평균 점수를 계산하세요
+    
     average = sum(scores) / len(scores)
     
-    
     # TODO: 평균 이상인 학생들의 이름을 리스트로 추출하세요
-    above_average_students = [student["name"] for student in students if student["score"] >= average]
+    # above_average_students = [student["name"] for student in students if average <= student["score"]] # 리스트 컴프리헨션
+    #            리스트            결과로 넣을 것          변수      반복할 대상          조건
     
+    above_average_student = []
+    for student in students:
+        if average <= student["score"]:
+            above_average_student.append(student["name"])
     return average, above_average_students
 
 # 테스트 케이스
