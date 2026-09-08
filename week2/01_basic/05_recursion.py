@@ -34,12 +34,20 @@ def factorial(n):
     """
     # TODO: base case를 작성하세요 // 기저 조건 
     # n이 0이거나 1이면 1을 반환
-    if n == 0 or n == 1:
+
+    # / base case (기저 조건) : "언제 멈출 것인가." 더 이상 쪼갤 수 없는, 답이 이미 정해져 있는 가장 간단한 경우. 재귀 호출을 하지 않고 바로 값을 리턴
+    # / base case가 없다면 자기 자신을 무한히 호출해서 RecursionError가 남.
+
+    if n == 0 or n ==1:
         return 1
-    
+
     # TODO: recursive case를 작성하세요 // 재귀 조건
+
+    # / Recursive case (재귀 조건) : "어떻게 더 작은 문제로 쪼갤 것인가" 더 작은 같은 종류의 문제 + 약간의 추가 작업으로 표현하는 부분.
+    # / 함수가 자기 자신을 다시 호출함.(단, 더 작은 입력으로. 그래야 언젠가 base case에 도달함.)
+
     else:
-        return n * factorial(n -1)
+        return n * factorial(n-1)
 
 def fibonacci(n):
     """
@@ -53,14 +61,17 @@ def fibonacci(n):
     """
     # TODO: base case를 작성하세요
     # n이 0이면 0, n이 1이면 1 반환
-    if n == 0 :
+    
+    if n == 0:
         return 0
-    elif n == 1 :
-            return 1 
+    elif n == 1:
+        return 1
     
     # TODO: recursive case를 작성하세요
-    else : 
+
+    else: 
         return fibonacci(n-1) + fibonacci(n-2)
+
 
 # 테스트 케이스
 if __name__ == "__main__":
