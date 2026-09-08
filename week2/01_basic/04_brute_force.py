@@ -51,7 +51,8 @@ def find_two_sum_pairs(nums, target):
     ## nums[i] + nums[j]가 target과 같으면 (i, j)를 결과에 추가
 
     # 중첩 반복문(nested loop) : 반복문 안에 반복문.
-    for i in range(n): # range(n)는 0부터 n-1까지의 숫자를 순서대로 만듦. 반복문이 돌 때마다 i에 숫자 하나씩 들어옴. i는 쌍의 첫 번째로 고를 원소 인덱스
+    for i in range(n): # range(n)는 0부터 n-1까지의 숫자를 순서대로 만듦. 반복문이 돌 때마다 i에 숫자 하나씩 들어옴. 
+                       # i는 쌍의 첫 번째로 고를 원소 인덱스(번호로 일단 생각하기. 나중에 더할 때 값을 더하면됨. 그래서 하단 i + 1 은 인덱스 다음 번호를 말함.)
             for j in range(i + 1, n): # i +1로 시작해서 n 직전(n-1)까지 숫자를 만듦. j는 쌍의 두 번째로 고를 원소의 인덱스 인데, 
                                       # 항상 i 보다 큰 값부터 시작해서(i + 1)자기 자신과 짝짓거나 같은 쌍이 중복으로 나오는 걸 막는다. 
                 if nums[i] + nums[j] == target: # 요구하는 target같이 맞다면
