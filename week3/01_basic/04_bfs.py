@@ -47,13 +47,25 @@ def bfs(graph, start):
     
     # TODO: 큐 생성 및 시작 정점 추가
     ## 방문한 정점 집합
-    pass
+    queue = deque([start]) # / 뭔가를 넣어서 큐를 초기 상태로 만든 것.
+    visited.append(start) # /시작 정점을 미리 방문 표시해두는 것.
+                          # / 왜 미리 표시하는가? BFS를 진행 하다보면 얘가 큐에 들어갔던 애인가? 확인해야함. 안그러면 중복처리 되거나, 무한 반복에 들어감.
 
+    # print(queue)
+    # print(visited)
+    
+    
     # TODO: 큐가 빌 때까지 반복
     ## 큐에서 정점 꺼내기
     ## 인접한 정점들 확인
     ## 방문하지 않은 정점이면 큐에 추가
-    pass
+    while queue: # for 처럼 정해진 횟수가 아니라, 조건이 참인 동안 계속 반복하는 거. 큐가 비어있지 않은 동안 반복해야하니까...
+                 # 파이썬에서는 리스트나 큐 같은게 비어있으면 False, 뭔가가 들어있으면 True로 취급됨.
+        current = queue.popleft()
+        for neighbor in graph[current]:
+            if neighbor not in visited:
+                visited.append(neighbor)
+                queue.append(neighbor)
     
     return visited
 
@@ -72,3 +84,27 @@ if __name__ == "__main__":
     print(f"시작 정점: 0")
     print(f"방문 순서: {result}")
 
+'''
+개인 이해를 위한 풀이.
+
+직접 실행하면,
+
+[1단계] 큐에서 꺼냄: 0 (남은 queue = [])
+    -> 이웃 1 : 아직 방문 안 함 -> visited에 추가, queue에 추가.
+    -> 이웃 2 : 아직 방문 안 함 -> visited에 추가, queue에 추가.
+    현재 상태 : queue = [1, 2], visited = [0, 1, 2]
+[2단계] 큐에서 꺼냄 : 1 (남은 queue = [2])
+    -> 이웃 0 : 이미 방문했음 -> 건너뜀
+    -> 이웃 2 : 이미 방문했음 -> 건너뜀
+    현재 상태 : queue = [2], visited = [0, 1, 2]
+[3단계] 큐에서 꺼냄 : 2 (남은 queue = [])
+    -> 이웃 0 : 이미 방문했음 -> 건너뜀
+    -> 이웃 1 : 이미 방문했음 -> 건너뜀
+    -> 이웃 3: 아직 방문 안 함 -> visited에 추가, queue에 추가.
+    현재 상태 : queue = [3], visited = [0, 1, 2, 3]
+[4단계] 큐에서 꺼냄 : 3 (남은 queue = [])
+    -> 이웃 2 : 이미 방문했음 -> 건너뜀
+    현재 상태 : queue = [], visited = [0, 1, 2, 3]
+
+최종 방문 순서 : [0, 1, 2, 3]
+'''
