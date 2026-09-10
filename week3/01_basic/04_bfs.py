@@ -43,12 +43,12 @@ def bfs(graph, start):
     Returns:
         방문 순서 리스트
     """
-    visited = []
+    visited = [] # / 방문 순서를 기록할 리스트(최종 결과)
     
     # TODO: 큐 생성 및 시작 정점 추가
     ## 방문한 정점 집합
-    queue = deque([start]) # / 뭔가를 넣어서 큐를 초기 상태로 만든 것.
-    visited.append(start) # /시작 정점을 미리 방문 표시해두는 것.
+    queue = deque([start]) # / 뭔가를 넣어서 큐를 초기 상태로 만든 것. # 큐 생성, start 하나만 넣고 시작.
+    visited.append(start) # / start는 시작 정점을 미리 방문 표시해두는 것. (중복 방지)
                           # / 왜 미리 표시하는가? BFS를 진행 하다보면 얘가 큐에 들어갔던 애인가? 확인해야함. 안그러면 중복처리 되거나, 무한 반복에 들어감.
 
     # print(queue)
@@ -59,15 +59,15 @@ def bfs(graph, start):
     ## 큐에서 정점 꺼내기
     ## 인접한 정점들 확인
     ## 방문하지 않은 정점이면 큐에 추가
-    while queue: # for 처럼 정해진 횟수가 아니라, 조건이 참인 동안 계속 반복하는 거. 큐가 비어있지 않은 동안 반복해야하니까...
+    while queue: # for 처럼 정해진 횟수가 아니라, 조건이 참인 동안 계속 반복하는 거. 큐가 비어있지 않은 동안 반복해야하니까... # 큐가 텅빌 때 까지 반복.
                  # 파이썬에서는 리스트나 큐 같은게 비어있으면 False, 뭔가가 들어있으면 True로 취급됨.
-        current = queue.popleft()
-        for neighbor in graph[current]:
-            if neighbor not in visited:
-                visited.append(neighbor)
-                queue.append(neighbor)
+        current = queue.popleft() # 맨 앞(가장 먼저 넣은 것)을 꺼냄
+        for neighbor in graph[current]: # current의 이웃들을 하나씩 확인
+            if neighbor not in visited: # 아직 방문 안(큐에 안 넣은) 이웃이면
+                visited.append(neighbor) # 방문 표시
+                queue.append(neighbor) # 나중에 처리하도록 큐 뒤에 추가.
     
-    return visited
+    return visited # 방문했던 순서를 그대로 반환
 
 # 테스트 케이스
 if __name__ == "__main__":
@@ -84,7 +84,7 @@ if __name__ == "__main__":
     print(f"시작 정점: 0")
     print(f"방문 순서: {result}")
 
-'''
+'''  
 개인 이해를 위한 풀이.
 
 직접 실행하면,
