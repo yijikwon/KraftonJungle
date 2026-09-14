@@ -6,8 +6,8 @@ Purpose: Implementing the required functions for Question 1 */
 
 //////////////////////////////////////////////////////////////////////////////////
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h> // stdio.h 는 printf, sacns 같은 입출력 도구 가져오는 것.
+#include <stdlib.h> // stdlib.h 는 malloc, free 와 같은 메모리 관리 도구를 가져오는 것.
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -91,6 +91,22 @@ int main()
 int insertSortedLL(LinkedList *ll, int item)
 {
 	/* add your code here */
+	for (int i = 0; i < ll -> size; i++)
+	{
+		int currentValue = findNode(ll, i) -> item;
+		
+		if (currentValue == item)
+		{
+			return -1;
+		}
+		if (currentValue > item)			
+		{
+			insertNode(ll, i, item);
+			return i;
+		}
+	}	
+	insertNode(ll, ll -> size, item);
+	return ll -> size;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
