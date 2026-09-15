@@ -88,7 +88,7 @@ void moveOddItemsToBack(LinkedList *ll)
 {
 	/* add your code here */
 	int count = 0;
-	for (int i = 0; i < ll; i++)
+	for (int i = 0; i < ll -> size; i++)
 	{
 		if (findNode(ll, i) -> item % 2 != 0)
 		{
@@ -110,7 +110,7 @@ void moveOddItemsToBack(LinkedList *ll)
 
 		int value = findNode(ll, oddIndex) -> item;
 		removeNode(ll, oddIndex);
-		inserNode(ll, ll -> size, value);		
+		insertNode(ll, ll -> size, value);		
 	}
 }
 
