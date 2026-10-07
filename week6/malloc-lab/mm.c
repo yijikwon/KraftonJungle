@@ -97,7 +97,7 @@ team_t team = {
     주의 : 결과는 주소이다. 헤더 값이 필요하면 GET(HDRP(bp)), 크기가 필요하면 GET_SIZE(HDRP(bp))
 */
 
-#define FTRP(bp)((char *)bp + (GET_SIZE(HDRP(bp))225 -DSIZE)
+#define FTRP(bp) (char *)(bp) + GET_SIZE(HDRP(bp) - DSIZE)
 /*
     하는 일 : bp(patload 시작 주소)를 받아서 그 블록의 푸터 주소를 돌려준다
     어떻게 하나 : GET_SIZE(HDRP(bp)) - 헤더에 적힌 블록 크기를 꺼냄(안쪽부터 : 헤더 주소 -> 크기)
@@ -132,12 +132,109 @@ team_t team = {
 #define SIZE_T_SIZE (ALIGN(sizeof(size_t)))
 #define CHUNKSIZE (1<<12) /* 힙이 모자랄 때 한 번에 늘릴 크기*/
 
+static char *heap_listp;
+/*
+    static : 이 파일 안에서만 쓰는 변수
+    char * : 1바이트 단위로 주소 계산하려고
+*/
+
+static void *extend_heap(size_t words)
+{
+/*
+힙을 words 워드만큼 늘려서 새 빈 블록을 만들고, 그 블록의 bp를 돌려줌
+쓰이는 곳 : mm_init 끝(첫 빈 공간 만들기), mm_malloc(맞는 빈 블록이 없을 때)
+*/
+    char *bp;
+    size_t size;
+    /*
+        bp : 새 블록의 bp를 담을 변수(char * 라서 1바이트 단위 계산)
+        size : 실제로 늘릴 바이트 수
+    */
+
+    if (words % 2 ==1)
+        size = (words + 1) * WSIZE;
+    else
+        size = words * WSIZE;
+    /*
+        블록 크기는 8의 배수여야 해서, 워드 개수를 짝수로 맞춤
+        홀수면 1워드 더해서 바이트로, 짝수면 그대로 바이트로 바꿈
+        예 : words = 5 -> 6워드 -> 24바이트
+    */
+
+    bp = mem_sbrk(size);
+    if (bp == (void *) -1)
+        return NULL;
+    /*
+        힙을 못 늘렸으면 실패. 크기를 돌려주는 함수라 NULL
+    */
+
+    PUT(HDRP(bp), PACK(size, 0));
+    /* 새 블록 헤더 : 크기 size, 비어있음 */
+    PUT(FTRP(bp), PACK(size, 0));
+    /* 새 블록 푸처 : 헤더와 같은 내용
+       헤더를 먼저 써야 FTRP가 크기를 읽을 수 있음 (순서 중요)
+    */
+    PUT(HDRP(NEXT_BLKP(bp)), PACK(0, 1));
+    /* 새 공간의 마지막 4바이트에 새 에필로그 : 힙 끝이 뒤로 밀렸으니 끝 표시도 옮김 */
+
+    return bp;
+    /*
+        새 빈 블록의 bp를 돌려줌
+        (나중에 이전 블록이 비어 있으면 합치는 coalesce를 만들면, 여기를 return coalesce(bp); 로 바꿀 예정)
+    */
+}
+
+
 /* 
  * mm_init - initialize the malloc package.
  */
 int mm_init(void)
 {
-    return 0;
+    /* void *p = mem_sbrk(newsize); */
+    heap_listp = mem_sbrk(4 * WSIZE);
+    /*
+        힙을 16바이트(워드 4칸) 늘리고, 새로 받은 공간의 시작 주소를 heap_listp에 저장
+        4칸 = 패딩 + 플로로그 헤더 + 프롤로그 푸터 + 에필로그 헤더
+    */
+
+    /*
+    if (p == (void *) -1)
+        return NULL;
+    */
+    if (heap_listp == (void *) -1)
+        return -1;
+    /* 
+        mem_sbrk는 실패하면 (void *)-1을 돌려줌
+        힙을 못 늘렸으면 초기화 실패이므로 -1을 돌려주고 끝냄
+        mm_init은 돌려주는 함수라 NULL이 아니라 -1(mm_malloc은 주소를 돌려주니 NULL)
+    */
+
+    PUT(heap_listp, 0);
+    /*
+        첫 칸(heap_listp + 0)에 패딩 0을 씀
+        패딩은 정렬용 빈칸. 이게 있어야 이후 블록들의 bp가 8의 배수 위치에 놓임
+    */
+
+    PUT(heap_listp + (1 * WSIZE), PACK(DSIZE, 1)); // 두 번째 칸에 프롤로그 헤더 : 크기 8, 사용 중(값9)
+    PUT(heap_listp + (2 * WSIZE), PACK(DSIZE, 1));
+    // 세 번째 칸에 프롤로그 푸터 : 헤더와 같은 내용
+    // 푸터에는 푸터 자기 크기(4)가 아니라 블록 전체 크기(8)를 씀
+    PUT(heap_listp + (3 * WSIZE), PACK(0,1));
+    // 네 번째 칸에 에필로그 헤더 : 크기 0, 사용 중(값 1)
+    // 힙의 끝 표시. NEXT_BLKP로 따라가다 크기 0을 만나면 끝
+    /* 프롤로그를 쓰는 이유(묶어서 한 줄) : 항상 사용 중인 가짜 블록이라, 첫 진짜 블록이 PREV_BLKP로 힙 바깥을 읽는 일을 막아줌 */
+
+    heap_listp += (2 * WSIZE);
+    /*
+        heap_listp를 패딩(+0)에서 프롤로그 블록의 bp(+8)로 옮김
+        매크로들은 bp를 받으니까, 여기서부터 NEXT_BLKP로 블록들을 하나씩 따라갈 수 있음
+        += : heap_listp = heap_listp + (2 * WSZIE)와 같은 뜻
+    */
+
+    if (extend_heap(CHUNKSIZE / WSIZE) == NULL)
+        return -1;
+
+    return 0; /* 정상이면 0, 실패면 -1을 돌려줌*/
 }
 
 /* 
